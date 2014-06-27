@@ -1,7 +1,6 @@
 from array import array
 from exceptions import Exception
 from flask import Flask, request, render_template, make_response, abort
-import httplib, urllib
 import html2text
 import json
 import logging
