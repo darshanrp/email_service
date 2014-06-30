@@ -8,24 +8,24 @@ Installation Instructions
 
 1. Install Git
 
-   * Linux
-    
-     $ sudo apt-get install git-core
+  * Linux
+  
+    $ sudo apt-get install git-core
 
-   * Windows
-      
-     [Click here](http://git-scm.com/book/en/Getting-Started-Installing-Git#Installing-on-Windows) for instructions on installing Git for Windows
+  * Windows
+  
+    [Click here](http://git-scm.com/book/en/Getting-Started-Installing-Git#Installing-on-Windows) for instructions on installing Git for Windows
 
 2. Install virtualenv and pip
 
-   * Linux
-     
-      $ sudo apt-get install python-setuptools
-      $ sudo easy_install virtualenv   
+  * Linux
+  
+    $ sudo apt-get install python-setuptools
+    $ sudo easy_install virtualenv   
 
-   * Windows
-      
-      [Click here](http://arunrocks.com/guide-to-install-python-or-pip-on-windows/) for instructions on installing virtualenv and pip for Windows
+  * Windows
+  
+    [Click here](http://arunrocks.com/guide-to-install-python-or-pip-on-windows/) for instructions on installing virtualenv and pip for Windows
 
 3. Create a directory for your projects (replace &lt;PROJ_HOME&gt; with your desired directory path and name: for instance /email_service or /home/&lt;username&gt;/email_service)
 
@@ -35,24 +35,29 @@ Installation Instructions
 4. Pull down the project from github
 
   * Linux
+    
     $ git clone https://github.com/darshanrp/email_service.git
 
   * Windows (use Git Bash)
+    
     $ cd /<PROJ_HOME>
     $ git clone https://github.com/darshanrp/email_service.git
     
 5. Create virtual Python environment for the project
 
   * Linux and Windows(use Powershell or Command Prompt)
+    
     $ cd /<PROJ_HOME>/email_service
     $ virtualenv ENV
     
 6. Activate your virtual environment
 
   * Linux
+    
     $ source ENV/bin/activate
 
   * Windows
+    
     $ cd ENV/Scripts
     $ activate
     $ cd /<PROJ_HOME>/email_service
@@ -60,6 +65,7 @@ Installation Instructions
 7. Install dependencies
 
   * Linux and Windows(use Powershell or Command Prompt)
+    
     (ENV)$ pip install -r requirements.txt
 
 8. Update values in settings.py file
@@ -73,6 +79,7 @@ Installation Instructions
 9. Start webservice
 
   * Linux and Windows(use Powershell or Command Prompt)
+    
     (ENV)$ python email_service.py
 
 
