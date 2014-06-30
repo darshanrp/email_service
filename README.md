@@ -28,11 +28,11 @@ Installation Instructions
   
     [Click here](http://arunrocks.com/guide-to-install-python-or-pip-on-windows/) for instructions on installing virtualenv and pip for Windows
 
-3. Create a directory for your projects (replace &lt;PROJ_HOME&gt; with your desired directory path and name: for instance /email_service or /home/&lt;username&gt;/email_service)
+3. Create a directory for your projects (replace {PROJECT_HOME} with your desired directory path and name: for instance /email_service or /home/{username}/email_service)
 
-    $ mkdir /<PROJ_HOME>
+    $ mkdir /{PROJECT_HOME}
     
-    $ cd /<PROJ_HOME>
+    $ cd /{PROJECT_HOME}
     
 4. Pull down the project from github
 
@@ -42,7 +42,7 @@ Installation Instructions
 
   * Windows (use Git Bash)
     
-    $ cd /<PROJ_HOME>
+    $ cd /{PROJECT_HOME}
     
     $ git clone https://github.com/darshanrp/email_service.git
     
@@ -50,7 +50,7 @@ Installation Instructions
 
   * Linux and Windows(use Powershell or Command Prompt)
     
-    $ cd /<PROJ_HOME>/email_service
+    $ cd /{PROJECT_HOME}/email_service
     
     $ virtualenv ENV
     
@@ -66,7 +66,7 @@ Installation Instructions
     
     $ activate
     
-    $ cd /<PROJ_HOME>/email_service
+    $ cd /{PROJECT_HOME}/email_service
 
 7. Install dependencies
 
@@ -76,7 +76,7 @@ Installation Instructions
 
 8. Update values in settings.py file
 
-  * Replace <MAILGUN_DOMAIN> with the appropriate mailgun domain for Mailgun account
+  * Replace {MAILGUN_DOMAIN} with the appropriate mailgun domain for Mailgun account
   * Update API_KEY with Mailgun api key for your account
   * Update ALT_API_KEY with Mandrill api key for your account
   * Update SERVER_PORT with appropriate port number
@@ -93,6 +93,6 @@ Usage Instructions
 ==================
 In order to make a HTTP POST request to the webservice you can use the following curl command
 
-  $ curl -i -H "Content-Type: application/json" -H "Accept: application/json" -X POST -d '{"to":"darshan@gwu.edu","to_name":"Darshan Pandhi","from":"noreply@uber.com","from_name":"Uber","subject":"Test message from Uber","body":"<h1>Your bill</h1><p>$10</p>"}' http://localhost:8081/email
+  $ curl -i -H "Content-Type: application/json" -H "Accept: application/json" -X POST -d '{"to":"darshan@gwu.edu","to_name":"Darshan Pandhi","from":"noreply@uber.com","from_name":"Uber","subject":"Test message from Uber","body":"Your bill is $10."}' http://localhost:8081/email
 
 Note: To use curl on Windows, use curl command in git bash or follow installation instructions [here](http://d4dilip.wordpress.com/2013/01/11/setup-curl-on-windows-7-64-bit/)
