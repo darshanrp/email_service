@@ -9,18 +9,22 @@ Installation Instructions
 1. Install Git
 
    * Linux
-      $ sudo apt-get install git-core
+    
+     $ sudo apt-get install git-core
 
    * Windows
-      [Click here](http://git-scm.com/book/en/Getting-Started-Installing-Git#Installing-on-Windows) for instructions on installing Git for Windows
+      
+     [Click here](http://git-scm.com/book/en/Getting-Started-Installing-Git#Installing-on-Windows) for instructions on installing Git for Windows
 
 2. Install virtualenv and pip
 
    * Linux
+     
       $ sudo apt-get install python-setuptools
       $ sudo easy_install virtualenv   
 
    * Windows
+      
       [Click here](http://arunrocks.com/guide-to-install-python-or-pip-on-windows/) for instructions on installing virtualenv and pip for Windows
 
 3. Create a directory for your projects (replace &lt;PROJ_HOME&gt; with your desired directory path and name: for instance /email_service or /home/&lt;username&gt;/email_service)
