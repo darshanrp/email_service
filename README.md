@@ -21,6 +21,7 @@ Installation Instructions
   * Linux
   
     $ sudo apt-get install python-setuptools
+    
     $ sudo easy_install virtualenv   
 
   * Windows
@@ -30,6 +31,7 @@ Installation Instructions
 3. Create a directory for your projects (replace &lt;PROJ_HOME&gt; with your desired directory path and name: for instance /email_service or /home/&lt;username&gt;/email_service)
 
     $ mkdir /<PROJ_HOME>
+    
     $ cd /<PROJ_HOME>
     
 4. Pull down the project from github
@@ -41,6 +43,7 @@ Installation Instructions
   * Windows (use Git Bash)
     
     $ cd /<PROJ_HOME>
+    
     $ git clone https://github.com/darshanrp/email_service.git
     
 5. Create virtual Python environment for the project
@@ -48,6 +51,7 @@ Installation Instructions
   * Linux and Windows(use Powershell or Command Prompt)
     
     $ cd /<PROJ_HOME>/email_service
+    
     $ virtualenv ENV
     
 6. Activate your virtual environment
@@ -59,7 +63,9 @@ Installation Instructions
   * Windows
     
     $ cd ENV/Scripts
+    
     $ activate
+    
     $ cd /<PROJ_HOME>/email_service
 
 7. Install dependencies
