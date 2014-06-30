@@ -1,16 +1,24 @@
 from array import array
+from datetime import datetime
+from database import db_session, init_db
+from models import Email
 from exceptions import Exception
-from flask import Flask, request, render_template, make_response, abort
+from flask import Flask, request, make_response, abort, g
+from flask.ext.sqlalchemy import SQLAlchemy
 import html2text
 import json
 import logging
+from pytz import timezone
 import re
 import requests
 import settings
+import sqlite3
 
 log = logging.getLogger(__name__)
 
 app = Flask(__name__)
+app.config.from_object('settings')
+
 
 @app.route("/email", methods=['POST'])
 def email():
@@ -23,12 +31,12 @@ def email():
 	if request.method == 'POST':
 		data = request.get_json(force=True)
 		data = validations(data)
-		#response.headers['Access-Control-Allow-Origin'] = '*'
-
-		if send_email(data):
+		response = send_email(data)
+		if  response == 'success':
 			return make_response("Email sent successfully!")
 		else:
-			abort(500, "Error sending email. Check logs for error details.")
+			abort(500, response)
+	emails = Email.query.all()	
 
 
 def send_email(data):
@@ -41,26 +49,58 @@ def send_email(data):
 	if not settings.API_KEY:
 		abort(500,'Email provider API_KEY is not set')
 
+	status = False
 	if settings.EMAIL_PROVIDER == 'MAILGUN':
-		return send_email_using_mailgun(data, settings.URL, settings.API_KEY)
+		status = send_email_using_mailgun(data, settings.URL, settings.API_KEY)
+		if status != 'success' and settings.AUTO_SWITCH_EMAIL_PROVIDER:		#check to auto switch email provider
+			return send_email_using_mandrill(data, settings.ALT_URL, settings.ALT_API_KEY)
+
 	elif settings.EMAIL_PROVIDER == 'MANDRILL':
-		return send_email_using_mandrill(data, settings.URL, settings.API_KEY)
+		status = send_email_using_mandrill(data, settings.URL, settings.API_KEY)
+		if status != 'success' and settings.AUTO_SWITCH_EMAIL_PROVIDER:		#check to auto switch email provider
+			return send_email_using_mailgun(data, settings.ALT_URL, settings.ALT_API_KEY)
+
+	if status == 'success':		#Storing emails sent in the database
+		email = Email(to_name=data['to_name'], to_email=data['to'],
+					  from_email=data['from'], from_name=data['from_name'],
+					  subject=data['subject'], body=data['body'])
+		if 'send_at' in data and data['send_at']:
+			email.send_at = data['send_at']
+		
+		db_session.add(email)
+		db_session.commit()
+	
+	return status
 
 
 def send_email_using_mailgun(data, url, api_key):
+
 	try:
-		data['from'] = data['from_name'] + ' <' + data['from'] + '>'
-		data['to'] = data['to_name'] + ' <' + data['to'] + '>'
-		data['text'] = data['body']
+		params = {}
+		params['from'] = data['from_name'] + ' <' + data['from'] + '>'
+		params['to'] = data['to_name'] + ' <' + data['to'] + '>'
+		params['text'] = data['body']
+		params['subject'] = data['subject']
+		if 'send_at' in data and data['send_at']:
+			try:
+				local_timezone = timezone(settings.TIMEZONE)
+				date = local_timezone.localize(datetime.strptime(data['send_at'], '%Y-%m-%d %H:%M:%S'))
+				params['o:deliverytime'] = date.strftime('%a, %d %b %Y %H:%M:%S %Z')
+			except ValueError, e:
+				log.exception(e.message)
+				abort(400, 'Invalid delivery date/time provided. Please provide date/time in the format Y-m-d H:M:S')
+
 		response = requests.post(
 			url, auth=('api', api_key),
-			data=data)
-		response = None
+			data=params)
 		log.debug('response from server: ' + response.text)
+		
+		if response.status_code != 200:
+			return response.text
 	except Exception,e:
 		log.exception(e.message)
-		return False
-	return True
+		return e.message
+	return 'success'
 	
 	
 def send_email_using_mandrill(data, url, api_key):
@@ -76,14 +116,28 @@ def send_email_using_mandrill(data, url, api_key):
 		params = {}
 		params['message'] = message
 		params['key'] = api_key
+		
+		if 'send_at' in data and data['send_at']:
+			try:
+				local_timezone = timezone(settings.TIMEZONE)
+				date = local_timezone.localize(datetime.strptime(data['send_at'], '%Y-%m-%d %H:%M:%S'))
+				params['sent_at'] = date.strftime('%Y-%m-%d %H:%M:%S')
+			except ValueError, e:
+				log.exception(e.message)
+				abort(400, 'Invalid delivery date/time provided. Please provide date/time in the format Y-m-d H:M:S')
+
 		response = requests.post(
 			url,
 			data=json.dumps(params))
-		log.debug('response from server: ' + response)
+		log.debug('response from server: ' + response.text)
+		if response.status_code != 200:
+			return response.text
+		if response and json.loads(response.text)[0]['status'] == 'error':
+			return response.text
 	except Exception,e:
 		log.exception(e.message)
-		return False
-	return True
+		return e.message
+	return 'success'
 	
 
 def validations(data):
@@ -112,9 +166,14 @@ def validations(data):
 
 @app.route("/")
 def home():
-	return render_template('usage.html')
+	return make_response('Only the "/email" endpoint is supported by this webservice.')
+	
+	
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db_session.remove()
 
-
+	
 if __name__ == "__main__":
-	app.debug = True
-	app.run(host='0.0.0.0',port=8081)
+	init_db()
+	app.run(host='0.0.0.0',port=settings.SERVER_PORT)

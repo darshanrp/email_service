@@ -1,10 +1,15 @@
 import logging.config
 
+SERVER_PORT=8081
+TIMEZONE='US/Eastern'
+
+DEBUG=False
+
 EMAIL_PROVIDER='MAILGUN'
-URL='https://api.mailgun.net/v2/sandbox331829865a9e46e7861445357c0d24ec.mailgun.org/messages'
+URL='https://api.mailgun.net/v2/<MAILGUN_DOMAIN>/messages'
 API_KEY=''
 
-AUTO_SELECT_EMAIL_PROVIDER=False
+AUTO_SWITCH_EMAIL_PROVIDER=True
 
 ALT_EMAIL_PROVIDER='MANDRILL'
 ALT_URL='https://mandrillapp.com/api/1.0/messages/send.json'
